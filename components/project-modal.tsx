@@ -54,8 +54,9 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4">
         <div
-          className="bg-card border border-border rounded-t-lg sm:rounded-lg max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
+          className="bg-card border border-border rounded-t-lg sm:rounded-lg max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-track-card scrollbar-thumb-muted hover:scrollbar-thumb-muted-foreground"
           onClick={(e) => e.stopPropagation()}
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {/* Header with close button */}
           <div className="sticky top-0 bg-card border-b border-border p-3 sm:p-6 flex items-start justify-between gap-3 bg-opacity-95 backdrop-blur-sm">
