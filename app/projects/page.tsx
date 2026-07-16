@@ -97,13 +97,23 @@ const projects = [
     category: 'Mobile System',
     image: '/ceme.png',
     description:
-      'A Flutter-based mobile system for cemetery navigation and contract management, designed around clarity, guided workflows, and practical utility. Click to see the case study!',
+      'A Flutter-based mobile system for cemetery navigation and contract management, designed around clarity, guided workflows, and practical utility. Features interactive cemetery mapping, contract signing workflows, real-time navigation, and comprehensive plot information management powered by Google Gemini AI.',
     tags: [
       'Flutter',
       'Firebase',
       'AI Integration',
       'Maps API',
       'Google Gemini',
+    ],
+    screenshots: [
+      '/mob1.png',
+      '/mob2.png',
+      '/mob3.png',
+      '/mob4.png',
+      '/mob5.png',
+      '/mob6.png',
+      '/mob7.png',
+      '/mob8.png',
     ],
   },
   {
