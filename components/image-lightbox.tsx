@@ -22,22 +22,21 @@ export default function ImageLightbox({
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
-    const handleArrowKeys = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') handlePrev()
-      if (e.key === 'ArrowRight') handleNext()
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev()
+      } else if (e.key === 'ArrowRight') {
+        handleNext()
+      }
     }
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.addEventListener('keydown', handleArrowKeys)
+      document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
       return () => {
-        document.removeEventListener('keydown', handleEscape)
-        document.removeEventListener('keydown', handleArrowKeys)
+        document.removeEventListener('keydown', handleKeyDown)
         document.body.style.overflow = 'unset'
       }
     }
@@ -61,59 +60,64 @@ export default function ImageLightbox({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 z-40 cursor-pointer"
+        className="fixed inset-0 bg-background/95 backdrop-blur-sm z-40 cursor-pointer"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Lightbox */}
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-          aria-label="Close lightbox"
-        >
-          <X className="w-6 h-6 text-white" />
-        </button>
-
-        {/* Main image */}
-        <div className="relative w-full h-full max-w-5xl max-h-[85vh] flex items-center justify-center">
-          <Image
-            src={images[currentIndex]}
-            alt={`${alt} - image ${currentIndex + 1}`}
-            fill
-            className="object-contain"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 80vw"
-          />
+      {/* Lightbox Container */}
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
+        {/* Header with close button */}
+        <div className="w-full max-w-5xl flex items-center justify-between mb-4">
+          <h3 className="text-sm sm:text-base font-light text-foreground/70 truncate">
+            {alt}
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-card rounded-lg transition-colors flex-shrink-0 ml-4"
+            aria-label="Close lightbox"
+          >
+            <X className="w-4 sm:w-5 h-4 sm:h-5 text-foreground" />
+          </button>
         </div>
 
-        {/* Navigation */}
+        {/* Main image container */}
+        <div className="relative w-full h-auto max-w-5xl flex items-center justify-center bg-card border border-border rounded-lg overflow-hidden">
+          <div className="relative w-full pt-[56.25%] sm:pt-[62.5%]">
+            <Image
+              src={images[currentIndex]}
+              alt={`${alt} - image ${currentIndex + 1}`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) calc(100vw - 24px), (max-width: 768px) calc(100vw - 32px), min(90vw, 56rem)"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Navigation Footer */}
         {images.length > 1 && (
-          <>
-            {/* Previous button */}
+          <div className="w-full max-w-5xl flex items-center justify-between mt-4">
             <button
               onClick={handlePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors hidden sm:flex items-center justify-center"
+              className="p-2 hover:bg-card rounded-lg transition-colors text-foreground/70 hover:text-foreground"
               aria-label="Previous image"
             >
-              <ChevronLeft className="w-6 h-6 text-white" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
-            {/* Next button */}
+            <div className="text-xs sm:text-sm font-light text-foreground/60">
+              {currentIndex + 1} <span className="text-foreground/40">of</span> {images.length}
+            </div>
+
             <button
               onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors hidden sm:flex items-center justify-center"
+              className="p-2 hover:bg-card rounded-lg transition-colors text-foreground/70 hover:text-foreground"
               aria-label="Next image"
             >
-              <ChevronRight className="w-6 h-6 text-white" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-
-            {/* Image counter */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full text-white text-sm font-light">
-              {currentIndex + 1} / {images.length}
-            </div>
-          </>
+          </div>
         )}
       </div>
     </>
