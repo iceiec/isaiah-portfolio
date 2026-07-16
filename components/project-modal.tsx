@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { X, ExternalLink } from 'lucide-react'
+import ImageLightbox from './image-lightbox'
 
 interface ProjectModalProps {
   project: {
@@ -20,6 +21,8 @@ interface ProjectModalProps {
 }
 
 export default function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -52,9 +55,9 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto sm:overflow-visible">
         <div
-          className="bg-card border border-border rounded-t-lg sm:rounded-lg max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-track-card scrollbar-thumb-muted hover:scrollbar-thumb-muted-foreground"
+          className="bg-card border border-border rounded-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto scrollbar-thin scrollbar-track-card scrollbar-thumb-muted hover:scrollbar-thumb-muted-foreground my-auto"
           onClick={(e) => e.stopPropagation()}
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
@@ -88,9 +91,14 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
               </h3>
               <div className={`grid gap-3 sm:gap-4 ${displayImages.length > 1 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2' : 'grid-cols-1'}`}>
                 {displayImages.map((image, index) => (
-                  <div 
-                    key={index} 
-                    className="relative w-full bg-muted rounded-lg overflow-hidden border border-border group"
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSelectedImageIndex(index)
+                      setLightboxOpen(true)
+                    }}
+                    className="relative w-full bg-muted rounded-lg overflow-hidden border border-border group focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-card"
+                    aria-label={`View screenshot ${index + 1}`}
                   >
                     <div className="relative w-full pt-[56.25%]">
                       <Image
@@ -100,8 +108,13 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-sm font-light">
+                          Click to expand
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -156,6 +169,15 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
           </div>
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        images={displayImages}
+        initialIndex={selectedImageIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        alt={project.title}
+      />
     </>
   )
 }
